@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School App - Circulars</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            color: #333;
+        }
+
+        .circular-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 22px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #007BFF;
+        }
+
+        label {
+            font-weight: bold;
+            margin-bottom: 8px;
+            display: block;
+            color: #555;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            resize: none;
+            height: 100px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #circulars-container {
+            margin-top: 20px;
+        }
+
+        .circular {
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .circular p {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .delete-circular {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #dc3545;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 14px;
+            width: 60px;
+        }
+
+        .delete-circular:hover {
+            background-color: #c82333;
+        }
+
+        /* Responsive */
+        @media (max-width: 500px) {
+            .circular-container {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            textarea {
+                font-size: 14px;
+                 font-family: 'Arial', sans-serif;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="circular-container">
+        <h1>Circulars - Admin & Teachers</h1>
+        <form id="circular-form">
+            <label for="circular-message">Message:</label>
+            <textarea id="circular-message" placeholder="Enter circular message..." required></textarea>
+            <button id="post-circular" type="submit">Post Circular</button>
+        </form>
+        <div id="circulars-container"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('circular-form');
+        const messageInput = document.getElementById('circular-message');
+        const circularsContainer = document.getElementById('circulars-container');
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            postCircular();
+        });
+
+        function postCircular() {
+            const message = messageInput.value.trim();
+
+            if (!message) {
+                alert('Please enter a message');
+                return;
+            }
+
+            const circularId = `circular_${Date.now()}`;
+            const circularHTML = `
+                <div class="circular" id="${circularId}">
+                    <button class="delete-circular" onclick="deleteCircular('${circularId}')">Delete</button>
+                    <p>${message}</p>
+                </div>
+            `;
+
+            circularsContainer.insertAdjacentHTML('beforeend', circularHTML);
+
+            // Save the circular to local storage
+            localStorage.setItem(circularId, message);
+
+            // Clear the textarea after posting
+            form.reset();
+        }
+
+        function deleteCircular(circularId) {
+            const circularElement = document.getElementById(circularId);
+            circularElement.remove();
+            localStorage.removeItem(circularId);
+        }
+
+        function loadCirculars() {
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('circular_')) {
+                    const message = localStorage.getItem(key);
+                    const circularHTML = `
+                        <div class="circular" id="${key}">
+                            <button class="delete-circular" onclick="deleteCircular('${key}')">Delete</button>
+                            <p>${message}</p>
+                        </div>
+                    `;
+                    circularsContainer.insertAdjacentHTML('beforeend', circularHTML);
+                }
+            }
+        }
+
+        // Load existing circulars on page load
+        document.addEventListener('DOMContentLoaded', loadCirculars);
+    </script><button id="back-to-top" title="Go to top">&#8679;</button>
+    <script>
+        // Get the button
+        let mybutton = document.getElementById("back-to-top");
+      
+        // When the user scrolls down 20px from the top of the document, show the button
+        window.onscroll = function() {
+          scrollFunction();
+        };
+      
+        function scrollFunction() {
+          if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            mybutton.style.display = "block";
+          } else {
+            mybutton.style.display = "none";
+          }
+        }
+      
+        // When the user clicks on the button, scroll to the top of the document
+        mybutton.onclick = function() {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+      </script>
+</body>
+</html>
